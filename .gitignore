@@ -1,0 +1,53 @@
+# Credenciales
+.env
+.env.*
+!.env.example
+
+# Fuentes con datos personales: nunca se versionan
+data/source/*
+!data/source/.gitkeep
+*.xlsm
+*.xlsx
+*.xls
+~$*
+P-MTO-*.pdf
+
+# Salidas del ETL que pueden contener datos sensibles
+data/private/
+etl/output/private/
+
+# Entregable generado
+BI_ProyectoFinal_*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Power BI
+powerbi/**/.pbi/localSettings.json
+powerbi/**/.pbi/cache.abf
+*.pbix
+*.pbit
+
+# Respaldos de la base
+*.dump
+*.backup
+pgdata/
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+.dbeaver/
+.project
+.settings/
