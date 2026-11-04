@@ -39,19 +39,51 @@ services:
       - ./sql/ddl:/app/sql/ddl:ro
       - ./docs/generated:/app/report
 
+  # Genera lecturas hora a hora en el esquema ops, calibradas con la historia cargada por el ETL,
+  # y recibe por webhook las alertas de Grafana. Solo expone el puerto 8080 a la red interna.
+  simulator:
+    build: ./simulator
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      etl:
+        condition: service_completed_successfully
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      ALERT_WEBHOOK_TOKEN: ${ALERT_WEBHOOK_TOKEN:?definir en .env}
+      SIM_SEGUNDOS_POR_HORA: ${SIM_SEGUNDOS_POR_HORA:-15}
+      OPS_DDL_DIR: /app/sql/ops
+    volumes:
+      - ./sql/ops:/app/sql/ops:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/salud', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
   grafana:
     image: grafana/grafana-oss:12.4.3
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
+      simulator:
+        condition: service_healthy
     environment:
       GF_SECURITY_ADMIN_USER: ${GF_ADMIN_USER:?definir en .env}
       GF_SECURITY_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD:?definir en .env}
       GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ALERT_WEBHOOK_TOKEN: ${ALERT_WEBHOOK_TOKEN:?definir en .env}
     ports:
       - "${GRAFANA_PORT:-3000}:3000"
     volumes:
