@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
   "name": "tarjeta_hnt",
   "position": {
-    "x": 268,
+    "x": 424,
     "y": 116,
     "z": 60,
-    "width": 240,
+    "width": 400,
     "height": 84,
     "tabOrder": 60
   },

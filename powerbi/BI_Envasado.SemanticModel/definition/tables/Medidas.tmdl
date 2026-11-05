@@ -129,12 +129,12 @@ table Medidas
 		displayFolder: 4. Paros
 		lineageTag: 3d3abf0c-8e63-53a4-963a-993bdebed4f1
 
-	/// Porcentaje acumulado de las causas ordenadas de mayor a menor, para el Pareto.
+	/// Porcentaje acumulado de las causas ordenadas de mayor a menor, para el Pareto. Itera por Código y nombre junto con Código porque la columna se ordena por Código y Power BI filtra por ambas; si solo se reemplazara una, las demás causas quedarían en blanco y la línea saldría plana en 100 %.
 	measure 'Pareto % acumulado' =
 			VAR _actual = [Horas de paro no programado]
 			VAR _tabla =
 			    ADDCOLUMNS (
-			        ALLSELECTED ( CausaParo[Código y nombre] ),
+			        ALLSELECTED ( CausaParo[Código y nombre], CausaParo[Código] ),
 			        "@horas", [Horas de paro no programado]
 			    )
 			VAR _acumulado = SUMX ( FILTER ( _tabla, [@horas] >= _actual ), [@horas] )
