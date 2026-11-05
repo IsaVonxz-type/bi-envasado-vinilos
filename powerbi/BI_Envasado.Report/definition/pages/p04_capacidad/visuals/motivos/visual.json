@@ -108,7 +108,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Horas no trabajadas por motivo (use las flechas de profundización)'"
+                  "Value": "'Horas no trabajadas por motivo, todos los meses (use las flechas de profundización)'"
                 }
               }
             }

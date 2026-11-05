@@ -23,37 +23,15 @@
                       "Entity": "Medidas"
                     }
                   },
-                  "Property": "Horas no trabajadas"
+                  "Property": "Horas no trabajadas (meses con registro)"
                 }
               },
-              "queryRef": "Medidas.Horas no trabajadas",
-              "nativeQueryRef": "Horas no trabajadas"
+              "queryRef": "Medidas.Horas no trabajadas (meses con registro)",
+              "nativeQueryRef": "Horas no trabajadas (meses con registro)"
             }
           ]
         }
       }
-    },
-    "visualContainerObjects": {
-      "title": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Horas no trabajadas'"
-                }
-              }
-            }
-          }
-        }
-      ]
     },
     "drillFilterOtherVisuals": true
   }

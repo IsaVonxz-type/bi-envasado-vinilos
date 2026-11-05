@@ -31,7 +31,7 @@
             }
           ]
         },
-        "ColumnY": {
+        "Y": {
           "projections": [
             {
               "field": {
@@ -49,7 +49,7 @@
             }
           ]
         },
-        "LineY": {
+        "Y2": {
           "projections": [
             {
               "field": {

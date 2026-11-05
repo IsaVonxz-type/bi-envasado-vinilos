@@ -63,9 +63,12 @@ table Medidas
 		displayFolder: 2. OEE
 		lineageTag: b40f5b1d-b68a-5868-9ae5-2b06fd51ec82
 
-	/// OEE solo cuando la cobertura del rendimiento es de al menos el 80 %. Antes de 2024 no se muestra.
+	/// OEE solo desde 2024 y cuando la cobertura del rendimiento de la selección es de al menos el 80 %. Antes de 2024 casi no hay estándar de velocidad y el valor no es comparable.
 	measure 'OEE confiable' =
-			IF ( [Cobertura del rendimiento] >= 0.8, [OEE] )
+			CALCULATE (
+			    IF ( [Cobertura del rendimiento] >= 0.8, [OEE] ),
+			    KEEPFILTERS ( Fecha[Año] >= 2024 )
+			)
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: 2. OEE
 		lineageTag: f2ed0ba6-24d1-5a40-9a51-0c22569819bf
@@ -170,40 +173,51 @@ table Medidas
 		displayFolder: 6. Capacidad
 		lineageTag: 15ce0af5-5195-5cfa-8b41-c39c00347b07
 
+	/// Horas trabajadas solo en los meses con registro de no operación completo, para que sean comparables con las horas no trabajadas.
+	measure 'Horas trabajadas (meses con registro)' =
+			CALCULATE ( [Horas trabajadas], Fecha[Mes con registro de no operación] = TRUE () )
+		formatString: #,0
+		displayFolder: 6. Capacidad
+		lineageTag: dd4ee957-1a69-5a91-9b9c-9f9faf30132a
+
+	/// Horas no trabajadas solo en los meses con registro completo.
+	measure 'Horas no trabajadas (meses con registro)' =
+			CALCULATE ( [Horas no trabajadas], Fecha[Mes con registro de no operación] = TRUE () )
+		formatString: #,0
+		displayFolder: 6. Capacidad
+		lineageTag: 9ed88e5b-ee3a-5da8-8478-4aa2ba33ee35
+
 	/// Horas trabajadas sobre horas trabajadas más no trabajadas, solo en los meses con registro de no operación completo (desde julio de 2024 casi no hay registro).
 	measure 'Utilización de capacidad' =
-			CALCULATE (
-			    DIVIDE ( [Horas trabajadas], [Horas trabajadas] + [Horas no trabajadas] ),
-			    Fecha[Mes con registro de no operación] = TRUE ()
-			)
+			DIVIDE ( [Horas trabajadas (meses con registro)], [Horas trabajadas (meses con registro)] + [Horas no trabajadas (meses con registro)] )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: 6. Capacidad
 		lineageTag: b73c285c-b528-5270-9039-c9213702cd69
 
 	/// OEE del mismo periodo del año anterior.
 	measure 'OEE año anterior' =
-			CALCULATE ( [OEE], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) )
+			CALCULATE ( [OEE confiable], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: 7. Inteligencia de tiempo
 		lineageTag: 506cb9fa-f959-57c9-8c93-d4ee4379077d
 
 	/// Diferencia en puntos porcentuales frente al mismo periodo del año anterior.
 	measure 'Variación del OEE vs año anterior (pp)' =
-			IF ( NOT ISBLANK ( [OEE] ) && NOT ISBLANK ( [OEE año anterior] ), ( [OEE] - [OEE año anterior] ) * 100 )
+			IF ( NOT ISBLANK ( [OEE confiable] ) && NOT ISBLANK ( [OEE año anterior] ), ( [OEE confiable] - [OEE año anterior] ) * 100 )
 		formatString: +0.0;-0.0;0.0
 		displayFolder: 7. Inteligencia de tiempo
 		lineageTag: 4cec120b-4a74-52a6-bca3-9c925649be1c
 
 	/// OEE desde el 1 de enero hasta la fecha de la selección (suma tiempos y unidades antes de dividir).
 	measure 'OEE acumulado del año' =
-			CALCULATE ( [OEE], DATESYTD ( Fecha[Fecha] ) )
+			CALCULATE ( [OEE confiable], DATESYTD ( Fecha[Fecha] ) )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: 7. Inteligencia de tiempo
 		lineageTag: 9c887b37-1630-55f3-bb7b-adf1a3fb0abf
 
 	/// OEE de los últimos tres meses, suavizando la variación mensual.
 	measure 'OEE móvil 3 meses' =
-			CALCULATE ( [OEE], DATESINPERIOD ( Fecha[Fecha], MAX ( Fecha[Fecha] ), -3, MONTH ) )
+			CALCULATE ( [OEE confiable], DATESINPERIOD ( Fecha[Fecha], MAX ( Fecha[Fecha] ), -3, MONTH ) )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: 7. Inteligencia de tiempo
 		lineageTag: 5eebfe28-b112-540a-8e82-cdfd6b298e9a

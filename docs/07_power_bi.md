@@ -55,23 +55,23 @@ erDiagram
 - **Columnas ocultas** para las llaves y los minutos crudos, y `discourageImplicitMeasures` para que todo se calcule con medidas explícitas.
 - **Columna calculada** `Fecha[Mes con registro de no operación]`, que marca los meses con al menos 30 filas de no operación: desde julio de 2024 casi no hay registro, y sin este filtro la utilización saldría cercana al 100 %.
 
-### Medidas (31)
+### Medidas (33)
 
 | Carpeta | Medidas | Idea clave |
 |---|---|---|
 | 1. Tiempos | Horas trabajadas, planificadas, operativas | Planificado = trabajado − paro programado; operativo = planificado − no programado. |
-| 2. OEE | Disponibilidad, Rendimiento, Calidad (supuesto), **OEE**, Cobertura del rendimiento, **OEE confiable**, Productividad Excel | `DIVIDE(SUM(), SUM())`: se suma antes de dividir. «OEE confiable» solo muestra el valor si la cobertura es de al menos 80 %. |
+| 2. OEE | Disponibilidad, Rendimiento, Calidad (supuesto), **OEE**, Cobertura del rendimiento, **OEE confiable**, Productividad Excel | `DIVIDE(SUM(), SUM())`: se suma antes de dividir. «OEE confiable» solo muestra el valor desde 2024 y si la cobertura de la selección es de al menos 80 %; la inteligencia de tiempo se apoya en ella. |
 | 3. Producción | Pacas válidas y reportadas, Unidades producidas, Unidades perdidas por paros no programados | Las pacas imposibles (R08) no suman a las válidas. |
 | 4. Paros | Horas de paro, Horas de paro no programado, % del paro no programado, **Pareto % acumulado** | El acumulado ordena las causas por horas con `ADDCOLUMNS` sobre `ALLSELECTED`. |
 | 5. Confiabilidad | Fallas, MTBF (h), MTTR (h) | Mismas definiciones que `vw_confiabilidad_mensual`. |
-| 6. Capacidad | Horas no trabajadas, Utilización de capacidad | La utilización solo considera meses con registro. |
+| 6. Capacidad | Horas no trabajadas, Horas trabajadas y no trabajadas (meses con registro), Utilización de capacidad | La utilización y las horas que la explican solo consideran meses con registro. |
 | 7. Inteligencia de tiempo | **OEE año anterior** (`SAMEPERIODLASTYEAR`), Variación del OEE vs año anterior (pp), **OEE acumulado del año** (`DATESYTD`), **OEE móvil 3 meses** (`DATESINPERIOD`), Disponibilidad año anterior, Pacas año anterior, Pacas acumuladas del año, Variación de pacas | Todas calculan el cociente sobre el periodo desplazado, no el promedio de cocientes. |
 
 Cada medida lleva su descripción en el modelo (`///` en TMDL), visible al pasar el cursor sobre ella en Desktop.
 
 ## Páginas del reporte
 
-Todas tienen **navegación** (botones arriba), **segmentaciones** de año, máquina y turno (sincronizadas entre páginas) y una nota con las salvedades del dato.
+Todas tienen **navegación** (navegador de páginas arriba), **segmentaciones** de año, máquina y turno (sincronizadas entre páginas) y una nota con las salvedades del dato.
 
 | Página | Pregunta | Qué contiene |
 |---|---|---|

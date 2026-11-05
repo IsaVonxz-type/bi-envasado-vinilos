@@ -17,7 +17,7 @@ flowchart LR
 
 - **Datos:** 8.208 filas del Excel (2022 a marzo de 2025) pasan por 26 reglas de limpieza documentadas y un cuadre de cifras; ningún nombre de persona llega a la base.
 - **Modelo:** estrella con tres hechos (producción, paros, no operación) y ocho dimensiones, entre ellas una con SCD tipo 2.
-- **Power BI:** proyecto PBIP con 31 medidas, inteligencia de tiempo, un Pareto y profundización por la jerarquía código → sistema → subcódigo.
+- **Power BI:** proyecto PBIP con 33 medidas, inteligencia de tiempo, un Pareto y profundización por la jerarquía código → sistema → subcódigo.
 - **Grafana:** tablero casi en tiempo real alimentado por un simulador calibrado con la historia, con tres reglas de alerta.
 
 ## Reproducir desde cero
