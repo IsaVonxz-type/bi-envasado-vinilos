@@ -129,16 +129,19 @@ table Medidas
 		displayFolder: 4. Paros
 		lineageTag: 3d3abf0c-8e63-53a4-963a-993bdebed4f1
 
-	/// Porcentaje acumulado de las causas ordenadas de mayor a menor, para el Pareto. Itera por Código y nombre junto con Código porque la columna se ordena por Código y Power BI filtra por ambas; si solo se reemplazara una, las demás causas quedarían en blanco y la línea saldría plana en 100 %.
+	/// Porcentaje acumulado de las causas ordenadas de mayor a menor, para el Pareto. Quita todos los filtros de CausaParo antes de iterar los códigos: la barra actual filtra por el nombre y también por Código (columna de orden), y si solo se reemplazara una, las demás causas quedarían en blanco y la línea saldría plana en 100 %.
 	measure 'Pareto % acumulado' =
 			VAR _actual = [Horas de paro no programado]
-			VAR _tabla =
-			    ADDCOLUMNS (
-			        ALLSELECTED ( CausaParo[Código y nombre], CausaParo[Código] ),
-			        "@horas", [Horas de paro no programado]
+			VAR _causas =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            VALUES ( CausaParo[Código] ),
+			            "@horas", [Horas de paro no programado]
+			        ),
+			        REMOVEFILTERS ( CausaParo )
 			    )
-			VAR _acumulado = SUMX ( FILTER ( _tabla, [@horas] >= _actual ), [@horas] )
-			VAR _total = SUMX ( _tabla, [@horas] )
+			VAR _acumulado = SUMX ( FILTER ( _causas, [@horas] >= _actual ), [@horas] )
+			VAR _total = SUMX ( _causas, [@horas] )
 			RETURN
 			    IF ( NOT ISBLANK ( _actual ), DIVIDE ( _acumulado, _total ) )
 		formatString: 0.0%;-0.0%;0.0%
