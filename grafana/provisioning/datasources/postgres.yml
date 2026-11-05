@@ -1,0 +1,22 @@
+apiVersion: 1
+
+# Fuente de datos creada al iniciar Grafana, sin configuracion manual.
+# Usa el usuario de solo lectura bi_lector; las credenciales vienen de variables de entorno.
+datasources:
+  - name: BI Envasado (PostgreSQL)
+    uid: bi-postgres
+    type: grafana-postgresql-datasource
+    access: proxy
+    url: db:5432
+    user: bi_lector
+    isDefault: true
+    editable: false
+    jsonData:
+      database: ${POSTGRES_DB}
+      sslmode: disable
+      postgresVersion: 1700
+      timescaledb: false
+      maxOpenConns: 10
+      maxIdleConns: 5
+    secureJsonData:
+      password: ${BI_READER_PASSWORD}

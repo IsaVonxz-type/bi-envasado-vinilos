@@ -1,0 +1,13 @@
+apiVersion: 1
+
+# Carga automaticamente los tableros versionados en grafana/dashboards/.
+providers:
+  - name: envasado
+    orgId: 1
+    folder: Envasado
+    type: file
+    disableDeletion: true
+    allowUiUpdates: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards

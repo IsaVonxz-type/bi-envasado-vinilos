@@ -23,7 +23,8 @@ def extraer_alertas(carga: dict) -> list[dict]:
         etiquetas = alerta.get("labels", {}) or {}
         anotaciones = alerta.get("annotations", {}) or {}
         valores = alerta.get("values") or {}
-        valor = _numero(valores.get("B"))
+        # A es la consulta (la medida observada); B es el resultado del umbral (0 o 1).
+        valor = _numero(valores.get("A"))
         if valor is None:
             valor = next((n for n in map(_numero, valores.values()) if n is not None), None)
         estado = alerta.get("status", carga.get("status", ""))
@@ -62,7 +63,11 @@ def crear_servidor(cfg, abrir_conexion, listo: threading.Event) -> ThreadingHTTP
             if self.path != "/alertas":
                 return self._responder(404)
             esperado = f"Bearer {cfg.token_webhook}"
-            if not hmac.compare_digest(self.headers.get("Authorization", ""), esperado):
+            recibido = self.headers.get("Authorization", "")
+            if not hmac.compare_digest(recibido, esperado):
+                # Nunca se registra el valor: solo el esquema y la longitud, para diagnosticar.
+                esquema = recibido.split(" ", 1)[0] if recibido else "(sin cabecera)"
+                print(f"Entrega rechazada: esquema={esquema} longitud={len(recibido)} esperada={len(esperado)}", flush=True)
                 return self._responder(401, "no autorizado")
             largo = int(self.headers.get("Content-Length", "0"))
             if largo <= 0 or largo > LIMITE_CUERPO:

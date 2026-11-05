@@ -1,0 +1,147 @@
+apiVersion: 1
+
+# Alertas del tablero de monitoreo. Todo se carga al iniciar Grafana.
+#
+# Una lectura equivale a una hora de produccion. En la demostracion llega una cada 15 s, por lo que
+# "for: 30s" son 2 lecturas consecutivas. En una planta real (una lectura por hora) la misma regla
+# se evaluaria cada 10 min con "for: 2h", sin cambiar la logica ni los umbrales.
+
+contactPoints:
+  - orgId: 1
+    name: webhook-simulador
+    receivers:
+      - uid: webhook-simulador
+        type: webhook
+        settings:
+          url: http://simulator:8080/alertas
+          httpMethod: POST
+          authorization_scheme: Bearer
+          # Grafana cifra este valor al guardarlo; viene de una variable de entorno, no del repositorio.
+          authorization_credentials: ${ALERT_WEBHOOK_TOKEN}
+
+policies:
+  - orgId: 1
+    receiver: webhook-simulador
+    group_by: ['alertname', 'maquina']
+    group_wait: 0s
+    group_interval: 10s
+    repeat_interval: 5m
+
+groups:
+  - orgId: 1
+    name: Monitoreo de lineas
+    folder: Envasado
+    interval: 10s
+    rules:
+      - uid: disponibilidad-baja
+        title: Disponibilidad baja
+        condition: B
+        for: 30s
+        noDataState: NoData
+        execErrState: Error
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: bi-postgres
+            model:
+              refId: A
+              editorMode: code
+              format: table
+              rawQuery: true
+              rawSql: |
+                SELECT maquina, ROUND(100 * disponibilidad_4h, 1) AS disponibilidad_4h
+                FROM ops.vw_estado_actual
+                WHERE ultima_lectura > now() - interval '2 minutes'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator: { type: lt, params: [40] }
+        annotations:
+          summary: "{{ $labels.maquina }}: disponibilidad de las ultimas 4 horas por debajo de 40 %"
+          description: >-
+            La disponibilidad (tiempo operativo sobre tiempo planificado) de las ultimas 4 lecturas es de
+            {{ $values.A }} %. Umbral: 40 %. Entre enero de 2024 y marzo de 2025 solo el 3,8 % de los turnos
+            de 6 h o mas quedo por debajo de ese nivel (2,4 % a 6,1 % segun la linea), asi que es una
+            desviacion y no la operacion habitual. Revisar la causa principal de paro de la linea.
+        labels:
+          severidad: critica
+
+      - uid: falla-activa
+        title: Falla electromecanica o de potencia
+        condition: B
+        for: 0s
+        noDataState: NoData
+        execErrState: Error
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: bi-postgres
+            model:
+              refId: A
+              editorMode: code
+              format: table
+              rawQuery: true
+              rawSql: |
+                SELECT e.maquina, COALESCE(SUM(p.minutos), 0) AS minutos_falla
+                FROM ops.escenario e
+                LEFT JOIN ops.paro_hora p
+                       ON p.maquina = e.maquina
+                      AND p.es_falla
+                      AND p.lectura_id = (SELECT MAX(l.lectura_id) FROM ops.lectura_hora l WHERE l.maquina = e.maquina)
+                GROUP BY e.maquina
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator: { type: gt, params: [0] }
+        annotations:
+          summary: "{{ $labels.maquina }}: falla de codigo 01 o 03 en la ultima lectura"
+          description: >-
+            La ultima hora de produccion registro {{ $values.A }} minutos de falla electromecanica o de
+            potencia. Avisar a mantenimiento: es la senal rapida, que no espera a que la ventana de 4 horas
+            caiga por debajo del umbral.
+        labels:
+          severidad: media
+
+      - uid: sin-lecturas
+        title: Sin lecturas recientes
+        condition: B
+        for: 30s
+        noDataState: Alerting
+        execErrState: Error
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: bi-postgres
+            model:
+              refId: A
+              editorMode: code
+              format: table
+              rawQuery: true
+              rawSql: |
+                SELECT e.maquina, COUNT(l.lectura_id) AS lecturas_recientes
+                FROM ops.escenario e
+                LEFT JOIN ops.lectura_hora l ON l.maquina = e.maquina AND l.ts > now() - interval '1 minute'
+                GROUP BY e.maquina
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator: { type: lt, params: [1] }
+        annotations:
+          summary: "{{ $labels.maquina }}: no llegan lecturas desde hace mas de un minuto"
+          description: >-
+            Si el monitoreo se queda sin datos, ninguna otra alerta puede dispararse. Revisar el simulador
+            (o, en una planta real, la conexion con el PLC).
+        labels:
+          severidad: critica

@@ -1,0 +1,932 @@
+{
+  "uid": "monitoreo-lineas",
+  "title": "Monitoreo de líneas de envasado",
+  "description": "Tablero operativo casi en tiempo real: disponibilidad, OEE y paros hora a hora por línea, con alertas.",
+  "tags": [
+    "envasado",
+    "oee",
+    "monitoreo"
+  ],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "liveNow": false,
+  "refresh": "5s",
+  "schemaVersion": 41,
+  "version": 1,
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m"
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "maquina",
+        "label": "Máquina",
+        "type": "query",
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "bi-postgres"
+        },
+        "query": "SELECT DISTINCT maquina FROM ops.lectura_hora ORDER BY 1",
+        "definition": "SELECT DISTINCT maquina FROM ops.lectura_hora ORDER BY 1",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "allValue": null,
+        "sort": 1,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "options": [],
+        "hide": 0,
+        "skipUrlUpdate": false
+      },
+      {
+        "name": "turno",
+        "label": "Turno",
+        "type": "query",
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "bi-postgres"
+        },
+        "query": "SELECT DISTINCT turno FROM ops.lectura_hora ORDER BY 1",
+        "definition": "SELECT DISTINCT turno FROM ops.lectura_hora ORDER BY 1",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "allValue": null,
+        "sort": 1,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "options": [],
+        "hide": 0,
+        "skipUrlUpdate": false
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "Cómo leer este tablero",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 3
+      },
+      "targets": [],
+      "options": {
+        "mode": "markdown",
+        "content": "**Datos simulados hora a hora.** Cada punto es una hora de producción y llega una cada 15 s; la simulación se calibra con la historia de 2024 y 2025 de cada línea. Las cifras de *4 h* suman las últimas cuatro lecturas antes de dividir. La calidad se supone 100 %, así que el OEE es un máximo. La alerta **Disponibilidad baja** se activa por debajo de 40 % durante 2 lecturas seguidas. Para provocar una falla: `UPDATE ops.escenario SET modo = 'falla' WHERE maquina = 'Vinilos_2'`."
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "$maquina",
+      "description": "Estado actual de la línea: disponibilidad y OEE de las últimas 4 lecturas. Rojo: por debajo del umbral de la alerta (40 %).",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "bi-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 3,
+        "w": 6,
+        "h": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "bi-postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT disponibilidad_4h AS \"Disponibilidad 4 h\", oee_4h AS \"OEE 4 h\"\nFROM ops.vw_estado_actual\nWHERE maquina = '$maquina'",
+          "refId": "A"
+        }
+      ],
+      "repeat": "maquina",
+      "repeatDirection": "h",
+      "maxPerRow": 4,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 1,
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.4
+              },
+              {
+                "color": "green",
+                "value": 0.7
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "OEE 4 h"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 0.6
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.75
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "textMode": "value_and_name",
+        "orientation": "vertical"
+      }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Disponibilidad móvil de 4 horas",
+      "description": "Tiempo operativo sobre tiempo planificado de las últimas 4 lecturas, por línea. Es la serie que evalúa la regla de alerta; la línea discontinua marca el umbral de 40 %.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "bi-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "bi-postgres"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, maquina AS metric, disp AS \"Disponibilidad móvil 4 h\"\nFROM (\n  SELECT ts AS time, maquina, turno,\n         SUM(minutos_operativos) OVER w / NULLIF(SUM(minutos_planificados) OVER w, 0) AS disp\n  FROM ops.lectura_hora\n  WHERE ts BETWEEN $__timeFrom()::timestamptz - interval '2 minutes' AND $__timeTo()::timestamptz AND maquina IN ($maquina)\n  WINDOW w AS (PARTITION BY maquina ORDER BY ts ROWS BETWEEN 3 PRECEDING AND CURRENT ROW)\n) t\nWHERE $__timeFilter(time) AND turno IN ($turno)\nORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "thresholdsStyle": {
+              "mode": "dashed"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0.4
+              }
+            ]
+          },
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "min"
+          ],
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "OEE móvil de 4 horas",
+      "description": "Disponibilidad × rendimiento × calidad de las últimas 4 lecturas. La calidad es un supuesto del 100 %, por lo que es un máximo. Líneas: 75 % (primera meta) y 85 % (largo plazo).",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "bi-postgres"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "bi-postgres"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, maquina AS metric, oee AS \"OEE móvil 4 h\"\nFROM (\n  SELECT ts AS time, maquina, turno,\n         SUM(minutos_operativos) OVER w / NULLIF(SUM(minutos_planificados) OVER w, 0)\n           * SUM(unidades_producidas) OVER w / NULLIF(SUM(unidades_teoricas) OVER w, 0) AS oee\n  FROM ops.lectura_hora\n  WHERE ts BETWEEN $__timeFrom()::timestamptz - interval '2 minutes' AND $__timeTo()::timestamptz AND maquina IN ($maquina)\n  WINDOW w AS (PARTITION BY maquina ORDER BY ts ROWS BETWEEN 3 PRECEDING AND CURRENT ROW)\n) t\nWHERE $__timeFilter(time) AND turno IN ($turno)\nORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "thresholdsStyle": {
+              "mode": "dashed"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.75
+              },
+              {
+                "color": "blue",
+                "value": 0.85
+              }
+            ]
+          },
+          "min": 0,
+          "max": 1.1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "min"
+          ],
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Minutos de paro por clasificación",
+      "description": "Minutos de paro de cada hora, separando los programados (aseo, pausas) de los no programados.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "bi-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "bi-postgres"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT p.ts AS time, p.clasificacion AS metric, SUM(p.minutos) AS \"Minutos de paro\"\nFROM ops.paro_hora p\nJOIN ops.lectura_hora l USING (lectura_id)\nWHERE $__timeFilter(p.ts) AND l.maquina IN ($maquina) AND l.turno IN ($turno)\nGROUP BY p.ts, p.clasificacion\nORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "m",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 70,
+            "showPoints": "never",
+            "spanNulls": true,
+            "thresholdsStyle": {
+              "mode": "off"
+            },
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "sum"
+          ],
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": "bargauge",
+      "title": "Causas principales de paro no programado",
+      "description": "Minutos por causa en el periodo seleccionado. Es la misma lectura que el Pareto del tablero de Power BI, en tiempo real.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "bi-postgres"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 17,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "bi-postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT p.causa AS \"Causa\", SUM(p.minutos) AS \"Minutos\"\nFROM ops.paro_hora p\nJOIN ops.lectura_hora l USING (lectura_id)\nWHERE $__timeFilter(p.ts) AND l.maquina IN ($maquina) AND l.turno IN ($turno) AND p.clasificacion = 'No programado'\nGROUP BY p.causa\nORDER BY 2 DESC\nLIMIT 8",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "m",
+          "decimals": 0,
+          "min": 0,
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "/^Minutos$/",
+          "values": true
+        },
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "valueMode": "color",
+        "namePlacement": "left",
+        "minVizHeight": 16,
+        "minVizWidth": 8
+      }
+    },
+    {
+      "id": 7,
+      "type": "bargauge",
+      "title": "Unidades producidas por línea",
+      "description": "Unidades envasadas por cada línea en el periodo seleccionado.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "bi-postgres"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 17,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "bi-postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT maquina AS \"Máquina\", SUM(unidades_producidas) AS \"Unidades producidas\"\nFROM ops.lectura_hora\nWHERE $__timeFilter(ts) AND maquina IN ($maquina) AND turno IN ($turno)\nGROUP BY maquina\nORDER BY maquina",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "/^Unidades producidas$/",
+          "values": true
+        },
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "valueMode": "color",
+        "namePlacement": "left",
+        "minVizHeight": 16,
+        "minVizWidth": 8
+      }
+    },
+    {
+      "id": 8,
+      "type": "table",
+      "title": "Última lectura por línea",
+      "description": "Lectura de la última hora de producción de cada línea, con su escenario de simulación.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "bi-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 14,
+        "h": 7
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "bi-postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT DISTINCT ON (maquina)\n       maquina AS \"Máquina\", hora_simulada AS \"Hora simulada\", turno AS \"Turno\", referencia AS \"Referencia\",\n       escenario AS \"Escenario\", minutos_no_programados AS \"Paro no programado (min)\",\n       disponibilidad AS \"Disponibilidad\", rendimiento AS \"Rendimiento\", oee AS \"OEE\"\nFROM ops.vw_lectura_hora\nWHERE maquina IN ($maquina)\nORDER BY maquina, ts DESC",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Escenario"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "normal": {
+                        "color": "green",
+                        "text": "normal",
+                        "index": 0
+                      },
+                      "degradado": {
+                        "color": "orange",
+                        "text": "degradado",
+                        "index": 1
+                      },
+                      "falla": {
+                        "color": "red",
+                        "text": "falla",
+                        "index": 2
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disponibilidad"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 0.4
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.7
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Rendimiento"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 0.6
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.85
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "OEE"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 0.6
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.75
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      }
+    },
+    {
+      "id": 9,
+      "type": "alertlist",
+      "title": "Reglas de alerta",
+      "description": "Estado de las reglas de alerta en este momento.",
+      "gridPos": {
+        "x": 14,
+        "y": 25,
+        "w": 10,
+        "h": 7
+      },
+      "targets": [],
+      "options": {
+        "viewMode": "list",
+        "groupMode": "default",
+        "groupBy": [],
+        "maxItems": 20,
+        "sortOrder": 1,
+        "dashboardAlerts": false,
+        "alertName": "",
+        "alertInstanceLabelFilter": "",
+        "datasource": "-- Grafana --",
+        "folder": null,
+        "stateFilter": {
+          "firing": true,
+          "pending": true,
+          "noData": true,
+          "normal": true,
+          "error": true
+        },
+        "showInstances": true
+      }
+    },
+    {
+      "id": 10,
+      "type": "table",
+      "title": "Alertas entregadas al webhook",
+      "description": "Avisos que Grafana entregó al receptor de alertas. Cada alerta se registra al dispararse (firing) y al resolverse (resolved).",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "bi-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 24,
+        "h": 7
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "bi-postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT recibido_en AS \"Recibida\", estado AS \"Estado\", regla AS \"Regla\", maquina AS \"Máquina\",\n       valor AS \"Valor\", severidad AS \"Severidad\"\nFROM ops.alerta_recibida\nORDER BY recibido_en DESC\nLIMIT 15",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Estado"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "firing": {
+                        "color": "red",
+                        "text": "disparada",
+                        "index": 0
+                      },
+                      "resolved": {
+                        "color": "green",
+                        "text": "resuelta",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Recibida"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      }
+    }
+  ]
+}

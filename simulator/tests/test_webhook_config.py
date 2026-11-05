@@ -14,9 +14,9 @@ def test_extrae_una_fila_por_alerta():
                 "status": "firing",
                 "labels": {"alertname": "Disponibilidad baja", "maquina": "Vinilos_2", "severidad": "critica"},
                 "annotations": {"summary": "Vinilos_2 por debajo del umbral"},
-                "values": {"A": 3, "B": 41.5},
+                "values": {"A": 41.5, "B": 1},
             },
-            {"status": "resolved", "labels": {"alertname": "Disponibilidad baja", "maquina": "Vinilos_3"}, "values": {"B": 80}},
+            {"status": "resolved", "labels": {"alertname": "Disponibilidad baja", "maquina": "Vinilos_3"}, "values": {"A": 80, "B": 0}},
         ],
     }
     filas = extraer_alertas(carga)
@@ -29,7 +29,7 @@ def test_extrae_una_fila_por_alerta():
 
 
 def test_ignora_estados_desconocidos_y_valores_no_numericos():
-    carga = {"alerts": [{"status": "pending", "labels": {}}, {"status": "firing", "labels": {}, "values": {"B": "x"}}]}
+    carga = {"alerts": [{"status": "pending", "labels": {}}, {"status": "firing", "labels": {}, "values": {"A": "x"}}]}
     filas = extraer_alertas(carga)
     assert len(filas) == 1 and filas[0]["valor"] is None and filas[0]["regla"] == "(sin nombre)"
 
