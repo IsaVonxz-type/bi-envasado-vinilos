@@ -101,9 +101,12 @@ docker compose run --rm --no-deps simulator python -m pytest tests -q
 8. [Arquitectura, comparación de capas y evolución hacia PLC o SCADA](docs/08_arquitectura_y_evolucion.md)
 9. [Datos personales y seguridad de acceso](docs/09_seguridad_y_datos_personales.md)
 10. [Diccionario de datos y linaje](docs/10_diccionario_de_datos.md)
-11. [Reporte de la última ejecución del ETL](docs/generated/reporte_etl.md)
+11. [Hallazgos y recomendaciones a la gerencia](docs/11_hallazgos_y_recomendaciones.md)
+12. [Reporte de la última ejecución del ETL](docs/generated/reporte_etl.md)
 
 ## Hallazgos principales
+
+Las recomendaciones, el guion de la sustentación y la estimación de impacto están en [docs/11](docs/11_hallazgos_y_recomendaciones.md).
 
 Calculados sobre los datos cargados (detalle en [la consulta 01](sql/queries/01_oee_anual_por_maquina.sql) y siguientes):
 
