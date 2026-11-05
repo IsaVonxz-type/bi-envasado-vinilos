@@ -18,6 +18,7 @@ Esto es lo que permite versionar el modelo sin subir los datos personales del Ex
 1. Levantar la solución (`docker compose up -d`) para que PostgreSQL esté en `localhost:5432`.
 2. Abrir [`powerbi/BI_Envasado.pbip`](../powerbi/BI_Envasado.pbip) con Power BI Desktop.
 3. Si pide un servidor distinto, editar los parámetros **Servidor** (`localhost:5432`) y **BaseDatos** (`bi_envasado`) en *Transformar datos → Administrar parámetros*.
+   **Si el puerto 5432 está ocupado** por otro PostgreSQL del equipo (por ejemplo un servicio de Windows), Power BI llega a ese servidor y responde «No hemos podido autenticarle con las credenciales proporcionadas». Compruébelo con `Get-NetTCPConnection -LocalPort 5432 -State Listen` en PowerShell. La solución es poner otro puerto en `POSTGRES_PORT` del `.env` (por ejemplo 5434), ejecutar `docker compose up -d` y usar `localhost:5434` en el parámetro Servidor.
 4. Al actualizar, elegir credenciales de **base de datos** con el usuario **`bi_lector`** y la clave `BI_READER_PASSWORD` del `.env`. No se guarda nada de esto en el proyecto. Si Desktop se queja del cifrado, desactivar «Cifrar conexiones»: el PostgreSQL local no tiene SSL.
 5. Actualizar. Desde ahí el reporte lee de la base, **no del Excel**.
 

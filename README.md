@@ -53,7 +53,7 @@ Grafana entra con `GF_ADMIN_USER` y `GF_ADMIN_PASSWORD` del `.env`, y abre direc
 
 Para empezar de cero, incluida la base: `docker compose down -v`.
 
-**Power BI y DBeaver** se ejecutan en el equipo anfitrión y se conectan a `localhost:5432`. DBeaver puede usar el usuario administrador del `.env`; Power BI usa `bi_lector`. Pasos en [docs/07_power_bi.md](docs/07_power_bi.md).
+**Power BI y DBeaver** se ejecutan en el equipo anfitrión y se conectan a `localhost` en el puerto de `POSTGRES_PORT` (5432 por defecto; si otro PostgreSQL ya lo usa, cambie el valor en `.env`). DBeaver puede usar el usuario administrador del `.env`; Power BI usa `bi_lector`. Pasos en [docs/07_power_bi.md](docs/07_power_bi.md).
 
 ### Demostración de las alertas
 
