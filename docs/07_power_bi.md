@@ -81,17 +81,18 @@ Todas tienen **navegación** (navegador de páginas arriba), **segmentaciones** 
 | **Capacidad** | ¿Cuánta capacidad queda sin usar y por qué? | Utilización, horas no trabajadas por motivo (con profundización), unidades perdidas. |
 | **Calidad del dato** | ¿Desde cuándo se puede confiar en el OEE? | Cobertura del rendimiento por año y mes; pacas reportadas frente a válidas; comparación con el indicador de Excel. |
 
-## Estado de la validación
+## Validación realizada
 
-- **Reporte (PBIR):** los 78 archivos JSON se validaron contra los esquemas oficiales de Microsoft (`visualContainer 2.4.0`, `report 3.0.0`, `page 2.0.0`) sin errores.
-- **Modelo (TMDL):** la sintaxis se escribió siguiendo la documentación de TMDL y la lógica de las medidas replica la de las vistas SQL, que sí se ejecutaron contra los datos reales. **El modelo no se abrió en Power BI Desktop al generarlo.** Antes de la sustentación hay que abrirlo, actualizar y comprobar que las cifras coincidan con las de las consultas (por ejemplo, el OEE de 2024: Vinilos_3 81,6 %, Vinilos_4 79,6 %, Vinilos_2 60,8 %, Vinilos_1 55,9 %).
+- **Reporte (PBIR):** los archivos JSON se validaron contra los esquemas oficiales de Microsoft (`visualContainer 2.4.0`, `report 3.0.0`, `page 2.0.0`) sin errores.
+- **Modelo y reporte abiertos en Power BI Desktop**, conectados a PostgreSQL con el usuario `bi_lector`. Se comprobó que las 11 tablas cargan, que las relaciones y las jerarquías funcionan y que las cifras coinciden con las consultas SQL: utilización de capacidad de 38,8 %, 5.557 h de paro no programado, MTBF de Vinilos_1 en 2022 de 46,2 h, y las 31 filas de la matriz de causas con sus porcentajes.
+- **Defectos encontrados al abrirlo y corregidos:** los gráficos combinados usaban nombres de rol incorrectos y salían vacíos, los botones de navegación salían sin texto (se reemplazaron por el navegador de páginas), y el Pareto y las medidas de inteligencia de tiempo mostraban valores donde no había datos.
 
-### Lista de comprobación al abrirlo
+### Cómo comprobarlo
 
 1. Desktop abre el proyecto sin mensajes de error de modelo.
 2. Las 11 tablas cargan filas (`OEE_Base` debe tener 4.005 filas).
 3. En Vista de modelo, hay 19 relaciones y la de persona involucrada aparece punteada.
-4. El OEE confiable de 2024 por máquina coincide con las cifras de arriba.
-5. «OEE año anterior» de 2025 devuelve el OEE de 2024 del mismo mes.
+4. El OEE confiable de 2024 por máquina coincide con las consultas: Vinilos_3 81,6 %, Vinilos_4 79,6 %, Vinilos_2 60,8 %, Vinilos_1 55,9 %.
+5. «OEE año anterior» de 2025 devuelve el OEE de 2024 del mismo mes, y queda en blanco desde abril de 2025.
 6. La jerarquía de paros se puede profundizar con las flechas del visual.
-7. Los botones de navegación cambian de página y las segmentaciones se mantienen.
+7. Los botones del navegador cambian de página y las segmentaciones se mantienen.
