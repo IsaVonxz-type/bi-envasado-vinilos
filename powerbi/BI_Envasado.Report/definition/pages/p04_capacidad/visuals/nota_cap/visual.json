@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "nota_cap",
+  "position": {
+    "x": 648,
+    "y": 470,
+    "z": 0,
+    "width": 616,
+    "height": 240,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Advertencia sobre el registro de no operación"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Desde julio de 2024 casi no hay filas de horas no trabajadas (9 en julio, ninguna desde octubre), aunque la producción sigue registrándose."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "La utilización solo usa los meses con registro completo: de lo contrario saldría cercana al 100 % solo porque nadie anotó los paros."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "'17. PARO DE MAQUINA' se asigna a paro por ventas por equivalencia con el catálogo vigente. Es un supuesto que conviene validar."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

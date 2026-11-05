@@ -1,0 +1,159 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "drill_jerarquia",
+  "position": {
+    "x": 648,
+    "y": 116,
+    "z": 11,
+    "width": 616,
+    "height": 300,
+    "tabOrder": 11
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "CausaParo"
+                        }
+                      },
+                      "Hierarchy": "Jerarquía de paros"
+                    }
+                  },
+                  "Level": "Área de impacto"
+                }
+              },
+              "queryRef": "CausaParo.Jerarquía de paros.Área de impacto",
+              "nativeQueryRef": "Jerarquía de paros Área de impacto",
+              "active": true
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "CausaParo"
+                        }
+                      },
+                      "Hierarchy": "Jerarquía de paros"
+                    }
+                  },
+                  "Level": "Código y nombre"
+                }
+              },
+              "queryRef": "CausaParo.Jerarquía de paros.Código y nombre",
+              "nativeQueryRef": "Jerarquía de paros Código y nombre"
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "CausaParo"
+                        }
+                      },
+                      "Hierarchy": "Jerarquía de paros"
+                    }
+                  },
+                  "Level": "Sistema"
+                }
+              },
+              "queryRef": "CausaParo.Jerarquía de paros.Sistema",
+              "nativeQueryRef": "Jerarquía de paros Sistema"
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "CausaParo"
+                        }
+                      },
+                      "Hierarchy": "Jerarquía de paros"
+                    }
+                  },
+                  "Level": "Subcódigo"
+                }
+              },
+              "queryRef": "CausaParo.Jerarquía de paros.Subcódigo",
+              "nativeQueryRef": "Jerarquía de paros Subcódigo"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Horas de paro no programado"
+                }
+              },
+              "queryRef": "Medidas.Horas de paro no programado",
+              "nativeQueryRef": "Horas de paro no programado"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Medidas"
+                  }
+                },
+                "Property": "Horas de paro no programado"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Horas de paro: área → código → sistema → subcódigo (use las flechas de profundización)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

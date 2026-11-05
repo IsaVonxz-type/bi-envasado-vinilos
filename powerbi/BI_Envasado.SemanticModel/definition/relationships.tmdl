@@ -1,0 +1,76 @@
+relationship 7ae72128-c73e-50fd-8543-9d301e78fa6f
+	fromColumn: OEE_Base.fecha_key
+	toColumn: Fecha.fecha_key
+
+relationship e169a26c-df33-5d35-9054-1fe1632dc383
+	fromColumn: OEE_Base.maquina_key
+	toColumn: Maquina.maquina_key
+
+relationship 989714ce-facf-5190-aada-1cbd466a6c92
+	fromColumn: OEE_Base.turno_key
+	toColumn: Turno.turno_key
+
+relationship 64ced842-0e95-5803-9e35-117e139e5907
+	fromColumn: OEE_Base.referencia_key
+	toColumn: Referencia.referencia_key
+
+relationship a5e4b579-890c-508e-a785-6c56b2fbde24
+	fromColumn: Produccion.fecha_key
+	toColumn: Fecha.fecha_key
+
+relationship c8d4b3d0-d056-5411-a050-2b05648a566f
+	fromColumn: Produccion.maquina_key
+	toColumn: Maquina.maquina_key
+
+relationship 419c393f-2259-55bc-bde1-a235d4cca336
+	fromColumn: Produccion.turno_key
+	toColumn: Turno.turno_key
+
+relationship 82d08e20-3cf6-5ad1-b46f-c932942972ed
+	fromColumn: Produccion.referencia_key
+	toColumn: Referencia.referencia_key
+
+relationship d3a4668c-ec73-5c9d-9bcc-bd872e3ed8fb
+	fromColumn: Produccion.operario_key
+	toColumn: Persona.persona_key
+
+relationship 85091c4a-c65e-5cef-971d-b85946c1f127
+	fromColumn: Paros.fecha_key
+	toColumn: Fecha.fecha_key
+
+relationship f8eaf243-cbdf-5737-b3f7-15e4914c391a
+	fromColumn: Paros.maquina_key
+	toColumn: Maquina.maquina_key
+
+relationship 8fac01a3-ed80-57ec-945f-f94abb1e3f05
+	fromColumn: Paros.turno_key
+	toColumn: Turno.turno_key
+
+relationship ae74bb8e-15f0-5d91-9584-e59087899ccb
+	fromColumn: Paros.referencia_key
+	toColumn: Referencia.referencia_key
+
+relationship e2e5d49a-cdd7-5d43-aff8-0da0bc6ca132
+	fromColumn: Paros.operario_key
+	toColumn: Persona.persona_key
+
+relationship 64981762-effa-580f-8711-1199b3f173c0
+	fromColumn: Paros.causa_key
+	toColumn: CausaParo.causa_key
+
+relationship ddf356c1-8db3-532e-a412-c4fdb19a841c
+	fromColumn: Paros.persona_involucrada_key
+	toColumn: Persona.persona_key
+	isActive: false
+
+relationship d1b2cdf0-caf4-58ee-b46d-d44cb0842d2e
+	fromColumn: NoOperacion.fecha_key
+	toColumn: Fecha.fecha_key
+
+relationship 1c2e2e3c-98dc-50b5-964b-a68106e3126c
+	fromColumn: NoOperacion.maquina_key
+	toColumn: Maquina.maquina_key
+
+relationship 8617bb4c-4cb2-5b5e-9e2b-73ca49443c44
+	fromColumn: NoOperacion.motivo_key
+	toColumn: MotivoNoOperacion.motivo_key

@@ -1,0 +1,241 @@
+table Medidas
+	lineageTag: 92edbe3c-8122-5655-b647-18603bf41a8d
+
+	column Value
+		isHidden
+		lineageTag: e68f05a0-5034-5d51-906c-df3fd3c1ca41
+		isNameInferred
+		sourceColumn: [Value]
+
+	/// Horas que la línea estuvo programada para trabajar.
+	measure 'Horas trabajadas' =
+			DIVIDE ( SUM ( OEE_Base[minutos_trabajados] ), 60 )
+		formatString: #,0.0
+		displayFolder: 1. Tiempos
+		lineageTag: aefda6c4-cdcc-5fb0-b710-25bedac42b4e
+
+	/// Horas trabajadas menos el paro programado (aseo, pausas activas, cambio de insumos).
+	measure 'Horas planificadas' =
+			DIVIDE ( SUM ( OEE_Base[minutos_planificados] ), 60 )
+		formatString: #,0.0
+		displayFolder: 1. Tiempos
+		lineageTag: 4055dfbd-b363-50b0-941b-1ccc0117a0ff
+
+	/// Horas planificadas menos el paro no programado.
+	measure 'Horas operativas' =
+			DIVIDE ( SUM ( OEE_Base[minutos_operativos] ), 60 )
+		formatString: #,0.0
+		displayFolder: 1. Tiempos
+		lineageTag: 224f20f8-2ccc-54b2-aa74-3411b527eaae
+
+	/// Tiempo operativo sobre tiempo planificado. Se suman los tiempos antes de dividir.
+	measure Disponibilidad =
+			DIVIDE ( SUM ( OEE_Base[minutos_operativos] ), SUM ( OEE_Base[minutos_planificados] ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 2. OEE
+		lineageTag: 52cd93f1-06dc-5cfc-84bf-1597df7052a8
+
+	/// Unidades producidas sobre las que daría el estándar de velocidad en el tiempo operativo. Solo donde hay estándar.
+	measure Rendimiento =
+			DIVIDE ( SUM ( OEE_Base[unidades_producidas] ), SUM ( OEE_Base[unidades_teoricas] ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 2. OEE
+		lineageTag: a15420cf-4f47-5558-8514-9e0c8060abcc
+
+	/// La fuente no registra rechazos: se supone 100 %. Por eso el OEE es un máximo.
+	measure 'Calidad (supuesto)' =
+			1
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 2. OEE
+		lineageTag: d93b511c-9bfd-5535-9708-8ccb77be5b71
+
+	/// Disponibilidad × rendimiento × calidad.
+	measure OEE =
+			[Disponibilidad] * [Rendimiento] * [Calidad (supuesto)]
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 2. OEE
+		lineageTag: d4fbf4fc-b14b-50d1-aa3a-bc767f5cbaea
+
+	/// Parte del tiempo operativo con estándar de velocidad. Si es baja, el rendimiento y el OEE no son confiables.
+	measure 'Cobertura del rendimiento' =
+			DIVIDE ( SUM ( OEE_Base[minutos_operativos_con_estandar] ), SUM ( OEE_Base[minutos_operativos] ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 2. OEE
+		lineageTag: b40f5b1d-b68a-5868-9ae5-2b06fd51ec82
+
+	/// OEE solo cuando la cobertura del rendimiento es de al menos el 80 %. Antes de 2024 no se muestra.
+	measure 'OEE confiable' =
+			IF ( [Cobertura del rendimiento] >= 0.8, [OEE] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 2. OEE
+		lineageTag: f2ed0ba6-24d1-5a40-9a51-0c22569819bf
+
+	/// Indicador que reporta hoy el Excel: (horas trabajadas − paro) / horas trabajadas. Cuenta como pérdida el paro programado.
+	measure 'Productividad Excel' =
+			DIVIDE ( SUM ( Produccion[horas_trabajadas] ) - DIVIDE ( SUM ( Paros[minutos_paro] ), 60 ), SUM ( Produccion[horas_trabajadas] ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 2. OEE
+		lineageTag: 30316096-1abf-5b54-8549-34ed8cde8c03
+
+	/// Pacas sin contar las 11 filas imposibles (más de 100 pacas por hora).
+	measure 'Pacas válidas' =
+			SUM ( Produccion[pacas_validas] )
+		formatString: #,0
+		displayFolder: 3. Producción
+		lineageTag: 271ae339-9efe-52de-86b8-582f90e2cab0
+
+	/// Pacas tal como se transcribieron.
+	measure 'Pacas reportadas' =
+			SUM ( Produccion[pacas_reportadas] )
+		formatString: #,0
+		displayFolder: 3. Producción
+		lineageTag: c85ceffa-9a26-5077-95e6-fd0f5bb03f75
+
+	/// Pacas válidas por unidades por paca, solo con referencia conocida.
+	measure 'Unidades producidas' =
+			SUM ( Produccion[unidades_producidas] )
+		formatString: #,0
+		displayFolder: 3. Producción
+		lineageTag: 707245b3-1f36-5171-829e-ffe9ebf20e61
+
+	/// Minutos de paro no programado por las unidades por minuto del estándar.
+	measure 'Unidades perdidas por paros no programados' =
+			SUM ( OEE_Base[unidades_perdidas_no_programado] )
+		formatString: #,0
+		displayFolder: 3. Producción
+		lineageTag: 415bd3bd-983a-5ca1-bb68-83d57591460f
+
+	/// Horas de paro, programado y no programado.
+	measure 'Horas de paro' =
+			DIVIDE ( SUM ( Paros[minutos_paro] ), 60 )
+		formatString: #,0.0
+		displayFolder: 4. Paros
+		lineageTag: 9177732a-4a22-5e2d-9697-1b3d753eb7d1
+
+	/// Horas de paro que no estaban planeadas.
+	measure 'Horas de paro no programado' =
+			CALCULATE ( [Horas de paro], CausaParo[Clasificación OEE] = "No programado" )
+		formatString: #,0.0
+		displayFolder: 4. Paros
+		lineageTag: 203f248c-d021-552a-8fc4-49806ac08546
+
+	/// Participación sobre el total de paro no programado de la selección.
+	measure '% del paro no programado' =
+			DIVIDE ( [Horas de paro no programado], CALCULATE ( [Horas de paro no programado], ALLSELECTED ( CausaParo ) ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 4. Paros
+		lineageTag: 3d3abf0c-8e63-53a4-963a-993bdebed4f1
+
+	/// Porcentaje acumulado de las causas ordenadas de mayor a menor, para el Pareto.
+	measure 'Pareto % acumulado' =
+			VAR _actual = [Horas de paro no programado]
+			VAR _tabla =
+			    ADDCOLUMNS (
+			        ALLSELECTED ( CausaParo[Código y nombre] ),
+			        "@horas", [Horas de paro no programado]
+			    )
+			VAR _acumulado = SUMX ( FILTER ( _tabla, [@horas] >= _actual ), [@horas] )
+			VAR _total = SUMX ( _tabla, [@horas] )
+			RETURN
+			    IF ( NOT ISBLANK ( _actual ), DIVIDE ( _acumulado, _total ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 4. Paros
+		lineageTag: 487e061c-bd5f-5d49-8f56-6a059263522e
+
+	/// Líneas con código 01 o 03. La fuente no registra eventos, así que varias fallas en una línea cuentan como una.
+	measure Fallas =
+			CALCULATE ( COUNTROWS ( Paros ), CausaParo[Es falla] = TRUE () )
+		formatString: #,0
+		displayFolder: 5. Confiabilidad
+		lineageTag: aed1d380-88b1-5f70-9e84-e2b4742ebc2c
+
+	/// Tiempo medio entre fallas: horas operativas sobre fallas. Sobrestimado por la razón anterior.
+	measure 'MTBF (h)' =
+			DIVIDE ( [Horas operativas], [Fallas] )
+		formatString: #,0.0
+		displayFolder: 5. Confiabilidad
+		lineageTag: 36be6fe1-414c-5e99-a89c-558fee9e4ed0
+
+	/// Tiempo medio de reparación: minutos de los códigos 01, 02 y 03 sobre fallas.
+	measure 'MTTR (h)' =
+			DIVIDE ( CALCULATE ( SUM ( Paros[minutos_paro] ), CausaParo[Código] IN { 1, 2, 3 } ) / 60, [Fallas] )
+		formatString: #,0.00
+		displayFolder: 5. Confiabilidad
+		lineageTag: 2efa40d4-af0e-5a70-ba66-fcd964f7d914
+
+	/// Horas en que la línea no operó, ajustadas para no contar dos veces el mismo día.
+	measure 'Horas no trabajadas' =
+			SUM ( NoOperacion[horas_ajustadas] )
+		formatString: #,0
+		displayFolder: 6. Capacidad
+		lineageTag: 15ce0af5-5195-5cfa-8b41-c39c00347b07
+
+	/// Horas trabajadas sobre horas trabajadas más no trabajadas, solo en los meses con registro de no operación completo (desde julio de 2024 casi no hay registro).
+	measure 'Utilización de capacidad' =
+			CALCULATE (
+			    DIVIDE ( [Horas trabajadas], [Horas trabajadas] + [Horas no trabajadas] ),
+			    Fecha[Mes con registro de no operación] = TRUE ()
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 6. Capacidad
+		lineageTag: b73c285c-b528-5270-9039-c9213702cd69
+
+	/// OEE del mismo periodo del año anterior.
+	measure 'OEE año anterior' =
+			CALCULATE ( [OEE], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 7. Inteligencia de tiempo
+		lineageTag: 506cb9fa-f959-57c9-8c93-d4ee4379077d
+
+	/// Diferencia en puntos porcentuales frente al mismo periodo del año anterior.
+	measure 'Variación del OEE vs año anterior (pp)' =
+			IF ( NOT ISBLANK ( [OEE] ) && NOT ISBLANK ( [OEE año anterior] ), ( [OEE] - [OEE año anterior] ) * 100 )
+		formatString: +0.0;-0.0;0.0
+		displayFolder: 7. Inteligencia de tiempo
+		lineageTag: 4cec120b-4a74-52a6-bca3-9c925649be1c
+
+	/// OEE desde el 1 de enero hasta la fecha de la selección (suma tiempos y unidades antes de dividir).
+	measure 'OEE acumulado del año' =
+			CALCULATE ( [OEE], DATESYTD ( Fecha[Fecha] ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 7. Inteligencia de tiempo
+		lineageTag: 9c887b37-1630-55f3-bb7b-adf1a3fb0abf
+
+	/// OEE de los últimos tres meses, suavizando la variación mensual.
+	measure 'OEE móvil 3 meses' =
+			CALCULATE ( [OEE], DATESINPERIOD ( Fecha[Fecha], MAX ( Fecha[Fecha] ), -3, MONTH ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 7. Inteligencia de tiempo
+		lineageTag: 5eebfe28-b112-540a-8e82-cdfd6b298e9a
+
+	/// Disponibilidad del mismo periodo del año anterior.
+	measure 'Disponibilidad año anterior' =
+			CALCULATE ( [Disponibilidad], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 7. Inteligencia de tiempo
+		lineageTag: 34da65d3-0d46-5b73-9371-96916256b062
+
+	/// Pacas válidas del mismo periodo del año anterior.
+	measure 'Pacas año anterior' =
+			CALCULATE ( [Pacas válidas], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) )
+		formatString: #,0
+		displayFolder: 7. Inteligencia de tiempo
+		lineageTag: 057dedd8-75eb-50bd-b4b9-3def32f606f2
+
+	/// Pacas válidas desde el 1 de enero.
+	measure 'Pacas acumuladas del año' =
+			CALCULATE ( [Pacas válidas], DATESYTD ( Fecha[Fecha] ) )
+		formatString: #,0
+		displayFolder: 7. Inteligencia de tiempo
+		lineageTag: 32e4ec32-37c9-577a-8aa9-4b70130dea1d
+
+	/// Cambio porcentual de las pacas frente al mismo periodo del año anterior.
+	measure 'Variación de pacas vs año anterior' =
+			DIVIDE ( [Pacas válidas] - [Pacas año anterior], [Pacas año anterior] )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 7. Inteligencia de tiempo
+		lineageTag: e1590be6-1b07-5d02-bfeb-cff8904e526e
+
+	partition Medidas = calculated
+		mode: import
+		source = {1}

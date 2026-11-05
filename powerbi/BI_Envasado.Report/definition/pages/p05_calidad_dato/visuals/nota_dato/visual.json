@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "nota_dato",
+  "position": {
+    "x": 648,
+    "y": 424,
+    "z": 0,
+    "width": 616,
+    "height": 286,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Qué dice este tablero"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "En 2022 ninguna línea tiene estándar de velocidad y en 2023 solo el 15 % al 24 %: el rendimiento y el OEE no son comparables antes de 2024."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Hay 11 filas con pacas imposibles (más de 100 por hora) en Vinilos_1, en julio de 2023: suman 52.493 pacas, el 13,9 % del total."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "El indicador actual de Excel cuenta el paro programado como pérdida, por eso difiere de la disponibilidad."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

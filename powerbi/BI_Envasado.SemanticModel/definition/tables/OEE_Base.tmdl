@@ -1,0 +1,140 @@
+table OEE_Base
+	lineageTag: 803944e8-05ad-5880-aafe-94659df51aac
+
+	column fecha_key
+		dataType: int64
+		isHidden
+		lineageTag: 403b05f2-0717-5dbe-9ae5-cc50028cf92d
+		summarizeBy: none
+		sourceColumn: fecha_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column maquina_key
+		dataType: int64
+		isHidden
+		lineageTag: cf80f301-79e6-5ca4-b9ce-ed35d9fd89d6
+		summarizeBy: none
+		sourceColumn: maquina_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column turno_key
+		dataType: int64
+		isHidden
+		lineageTag: 18e995f6-163a-5d15-8cc3-10e8d59eda6a
+		summarizeBy: none
+		sourceColumn: turno_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column referencia_key
+		dataType: int64
+		isHidden
+		lineageTag: b5933c0c-f5ed-59e2-b14a-1e8f14c5469b
+		summarizeBy: none
+		sourceColumn: referencia_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column minutos_trabajados
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 933a7db0-e62c-5282-9e63-9b591e3cdcbd
+		summarizeBy: none
+		sourceColumn: minutos_trabajados
+
+		annotation SummarizationSetBy = Automatic
+
+	column minutos_programados
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: f1da6976-3503-548e-b062-246d34bab025
+		summarizeBy: none
+		sourceColumn: minutos_programados
+
+		annotation SummarizationSetBy = Automatic
+
+	column minutos_no_programados
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 33ec3a53-6387-56e9-b47a-3518388e3521
+		summarizeBy: none
+		sourceColumn: minutos_no_programados
+
+		annotation SummarizationSetBy = Automatic
+
+	column minutos_planificados
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 8190d3bd-246c-5ea6-9ad8-426c5deabbd2
+		summarizeBy: none
+		sourceColumn: minutos_planificados
+
+		annotation SummarizationSetBy = Automatic
+
+	column minutos_operativos
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: a739fda9-80b6-5fd1-914d-d97cd0435ffc
+		summarizeBy: none
+		sourceColumn: minutos_operativos
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades_producidas
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 00249af7-c95a-5c1a-baa8-98692130be97
+		summarizeBy: none
+		sourceColumn: unidades_producidas
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades_teoricas
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 397bf2ab-acbc-5ee0-8e20-cb1ad5c76a27
+		summarizeBy: none
+		sourceColumn: unidades_teoricas
+
+		annotation SummarizationSetBy = Automatic
+
+	column minutos_operativos_con_estandar
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: c6908aff-c26f-5ae0-b926-28bdccbae4e7
+		summarizeBy: none
+		sourceColumn: minutos_operativos_con_estandar
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades_perdidas_no_programado
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: ef8d2760-a18e-5351-a2f7-412751bf2438
+		summarizeBy: none
+		sourceColumn: unidades_perdidas_no_programado
+
+		annotation SummarizationSetBy = Automatic
+
+	partition OEE_Base = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="vw_oee_base"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"fecha_key", "maquina_key", "turno_key", "referencia_key", "minutos_trabajados", "minutos_programados", "minutos_no_programados", "minutos_planificados", "minutos_operativos", "unidades_producidas", "unidades_teoricas", "minutos_operativos_con_estandar", "unidades_perdidas_no_programado"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table

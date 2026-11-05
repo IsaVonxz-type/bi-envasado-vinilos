@@ -1,0 +1,58 @@
+table MotivoNoOperacion
+	lineageTag: bc978a64-1e0c-51de-9097-8e8064da1b35
+
+	column motivo_key
+		dataType: int64
+		isHidden
+		lineageTag: 4ef32607-9a22-514a-933f-e32fe6421ae3
+		summarizeBy: none
+		sourceColumn: motivo_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Categoría de no operación'
+		dataType: string
+		lineageTag: 29303e74-ee46-5deb-adb7-a334b717a2ce
+		summarizeBy: none
+		sourceColumn: categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Motivo de no operación'
+		dataType: string
+		lineageTag: 9d1ce45c-3c0f-526f-9932-51ab44035857
+		summarizeBy: none
+		sourceColumn: tipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Detalle del motivo'
+		dataType: string
+		lineageTag: a6f303c8-e534-541b-84c0-33827803cced
+		summarizeBy: none
+		sourceColumn: motivo
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Jerarquía de no operación'
+		lineageTag: abc61b93-3632-5b5a-ab90-48894c17dc69
+
+		level 'Categoría de no operación'
+			lineageTag: 82d78535-691f-5e31-ad11-0f0a8cc01928
+			column: 'Categoría de no operación'
+
+		level 'Motivo de no operación'
+			lineageTag: ee97012d-86e6-55c0-9cf6-68ef3f55d90e
+			column: 'Motivo de no operación'
+
+	partition MotivoNoOperacion = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="dim_motivo_no_operacion"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"motivo_key", "categoria", "tipo", "motivo"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table

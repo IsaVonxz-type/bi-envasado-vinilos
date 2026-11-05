@@ -1,0 +1,61 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "supuestos",
+  "position": {
+    "x": 648,
+    "y": 470,
+    "z": 0,
+    "width": 616,
+    "height": 240,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Cómo leer esta página"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "El OEE solo se muestra cuando al menos el 80 % del tiempo operativo tiene estándar de velocidad: eso ocurre desde 2024."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "La calidad se supone 100 %, porque la fuente no registra rechazos. El OEE es un máximo."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Los datos llegan hasta el 28/03/2025. Compare 2025 con 2024 solo en los mismos meses."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Las barras muestran el OEE; la línea, el mismo periodo del año anterior."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

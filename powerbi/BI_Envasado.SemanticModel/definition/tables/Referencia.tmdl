@@ -1,0 +1,68 @@
+table Referencia
+	lineageTag: 0ae432c3-f466-55ae-ada3-d654c7f749b3
+
+	column referencia_key
+		dataType: int64
+		isHidden
+		lineageTag: 810b4a46-fa0a-59da-a1e9-5362e324bc25
+		summarizeBy: none
+		sourceColumn: referencia_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column Referencia
+		dataType: string
+		lineageTag: 143aa117-10f2-5bb5-afc6-6138ef094b68
+		summarizeBy: none
+		sourceColumn: referencia_nk
+
+		annotation SummarizationSetBy = Automatic
+
+	column Familia
+		dataType: string
+		lineageTag: df1254fb-c0a4-5953-82f2-046e792ef4ec
+		summarizeBy: none
+		sourceColumn: familia
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Volumen (cc)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 32a32076-d3ee-5cf6-8eec-a36290379843
+		summarizeBy: none
+		sourceColumn: volumen_cc
+
+		annotation SummarizationSetBy = Automatic
+
+	column Colores
+		dataType: int64
+		formatString: 0
+		lineageTag: 99306461-88bb-557b-88c1-a106f8dff726
+		summarizeBy: none
+		sourceColumn: colores
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Jerarquía de referencias'
+		lineageTag: 952027a7-c01a-51f5-8515-f81f3d6fdeb9
+
+		level Familia
+			lineageTag: b21782be-3946-51db-a1c8-0ffa7ced798e
+			column: Familia
+
+		level Referencia
+			lineageTag: bf6a337c-5c70-5716-806c-8111b010797d
+			column: Referencia
+
+	partition Referencia = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="dim_referencia"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"referencia_key", "referencia_nk", "familia", "volumen_cc", "colores"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table

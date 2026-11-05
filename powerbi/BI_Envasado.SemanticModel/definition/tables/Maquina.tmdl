@@ -1,0 +1,40 @@
+table Maquina
+	lineageTag: 9bd7081a-516a-516e-a1fe-952f31ee9cbc
+
+	column maquina_key
+		dataType: int64
+		isHidden
+		lineageTag: 7e74bae4-1a21-51b8-9770-0b73e38bcc02
+		summarizeBy: none
+		sourceColumn: maquina_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Máquina'
+		dataType: string
+		lineageTag: 33f059aa-5f39-560e-82e3-96b0058faaa6
+		summarizeBy: none
+		sourceColumn: maquina_nk
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Número de línea'
+		dataType: int64
+		formatString: 0
+		lineageTag: d708e13e-db69-5d36-9bba-ae4a1320453a
+		summarizeBy: none
+		sourceColumn: numero_linea
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Maquina = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="dim_maquina"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"maquina_key", "maquina_nk", "numero_linea"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table

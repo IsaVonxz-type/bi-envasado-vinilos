@@ -1,0 +1,59 @@
+table Turno
+	lineageTag: ffebaf30-03c5-5e1f-8eaa-5233f4c186e7
+
+	column turno_key
+		dataType: int64
+		isHidden
+		lineageTag: 58801bf5-2841-540c-8959-37de8b1340ef
+		summarizeBy: none
+		sourceColumn: turno_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column Turno
+		dataType: string
+		lineageTag: 9b7ece37-93ef-598a-8301-e24a7cb6e45a
+		summarizeBy: none
+		sourceColumn: turno_nk
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Esquema de turnos'
+		dataType: string
+		lineageTag: ddae9dff-8469-5c30-8ff4-67adb9a8fd2a
+		summarizeBy: none
+		sourceColumn: esquema
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Horas nominales'
+		dataType: double
+		formatString: 0.0
+		lineageTag: df872a58-ba0d-5b90-a8ad-34790624b837
+		summarizeBy: none
+		sourceColumn: horas_nominales
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Jerarquía de turnos'
+		lineageTag: 13f4d3c1-cb68-5a48-875a-0d5dbae89bab
+
+		level 'Esquema de turnos'
+			lineageTag: a47bd3c9-5a59-5bfe-86a5-e6e6b6be623e
+			column: 'Esquema de turnos'
+
+		level Turno
+			lineageTag: b456bd57-de6f-5550-9c80-7b0a0153306c
+			column: Turno
+
+	partition Turno = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="dim_turno"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"turno_key", "turno_nk", "esquema", "horas_nominales"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table

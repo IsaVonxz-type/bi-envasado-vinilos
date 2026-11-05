@@ -1,0 +1,95 @@
+table Paros
+	lineageTag: 111fc7ca-42cf-51a2-81d8-226bddb1a06f
+
+	column fecha_key
+		dataType: int64
+		isHidden
+		lineageTag: 7aaa4d2d-f5ec-5b4d-9140-8f374856648e
+		summarizeBy: none
+		sourceColumn: fecha_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column maquina_key
+		dataType: int64
+		isHidden
+		lineageTag: d43832fc-af0f-57d0-8f3c-f2060dc19eaa
+		summarizeBy: none
+		sourceColumn: maquina_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column turno_key
+		dataType: int64
+		isHidden
+		lineageTag: 3603bbaa-3900-5a8e-b1f1-3d5d00de20f4
+		summarizeBy: none
+		sourceColumn: turno_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column referencia_key
+		dataType: int64
+		isHidden
+		lineageTag: acd381b6-064f-512b-9db6-395f84325240
+		summarizeBy: none
+		sourceColumn: referencia_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column operario_key
+		dataType: int64
+		isHidden
+		lineageTag: e332b85c-a2e1-5666-9998-f5af5066a1e2
+		summarizeBy: none
+		sourceColumn: operario_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column causa_key
+		dataType: int64
+		isHidden
+		lineageTag: 95b4b3e0-ee9c-5819-bf7a-4b331d0656f1
+		summarizeBy: none
+		sourceColumn: causa_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column persona_involucrada_key
+		dataType: int64
+		isHidden
+		lineageTag: 47a2abe1-4a1f-5304-988e-242064237172
+		summarizeBy: none
+		sourceColumn: persona_involucrada_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Área involucrada'
+		dataType: string
+		lineageTag: c897082b-8395-582b-96e0-4a0811ae96bc
+		summarizeBy: none
+		sourceColumn: area_involucrada
+
+		annotation SummarizationSetBy = Automatic
+
+	column minutos_paro
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 92bb5df7-0ef8-5bf8-a3cf-21fafee8feeb
+		summarizeBy: none
+		sourceColumn: minutos_paro
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Paros = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="fact_paro"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"fecha_key", "maquina_key", "turno_key", "referencia_key", "operario_key", "causa_key", "persona_involucrada_key", "area_involucrada", "minutos_paro"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table

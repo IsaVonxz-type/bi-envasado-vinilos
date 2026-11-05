@@ -1,0 +1,11 @@
+/// Servidor y puerto de PostgreSQL. Con docker compose es localhost:5432.
+expression Servidor = "localhost:5432" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 5c5fa697-f784-5970-92ff-6936e3ccac9f
+
+	annotation PBI_ResultType = Text
+
+/// Nombre de la base de datos (POSTGRES_DB en .env).
+expression BaseDatos = "bi_envasado" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: e60d66b4-3331-5780-a28e-4fc79e09f959
+
+	annotation PBI_ResultType = Text

@@ -1,0 +1,26 @@
+model Model
+	culture: es-ES
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: es-ES
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+	annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref expression Servidor
+ref expression BaseDatos
+ref table Fecha
+ref table Maquina
+ref table Turno
+ref table Referencia
+ref table Persona
+ref table CausaParo
+ref table MotivoNoOperacion
+ref table OEE_Base
+ref table Produccion
+ref table Paros
+ref table NoOperacion
+ref table Medidas
+ref cultureInfo es-ES

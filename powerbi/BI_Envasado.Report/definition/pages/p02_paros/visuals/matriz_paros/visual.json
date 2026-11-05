@@ -1,0 +1,135 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "matriz_paros",
+  "position": {
+    "x": 16,
+    "y": 424,
+    "z": 12,
+    "width": 624,
+    "height": 286,
+    "tabOrder": 12
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "CausaParo"
+                        }
+                      },
+                      "Hierarchy": "Jerarquía de paros"
+                    }
+                  },
+                  "Level": "Código y nombre"
+                }
+              },
+              "queryRef": "CausaParo.Jerarquía de paros.Código y nombre",
+              "nativeQueryRef": "Jerarquía de paros Código y nombre"
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "CausaParo"
+                        }
+                      },
+                      "Hierarchy": "Jerarquía de paros"
+                    }
+                  },
+                  "Level": "Sistema"
+                }
+              },
+              "queryRef": "CausaParo.Jerarquía de paros.Sistema",
+              "nativeQueryRef": "Jerarquía de paros Sistema"
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "CausaParo"
+                        }
+                      },
+                      "Hierarchy": "Jerarquía de paros"
+                    }
+                  },
+                  "Level": "Subcódigo"
+                }
+              },
+              "queryRef": "CausaParo.Jerarquía de paros.Subcódigo",
+              "nativeQueryRef": "Jerarquía de paros Subcódigo"
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Horas de paro no programado"
+                }
+              },
+              "queryRef": "Medidas.Horas de paro no programado",
+              "nativeQueryRef": "Horas de paro no programado"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "% del paro no programado"
+                }
+              },
+              "queryRef": "Medidas.% del paro no programado",
+              "nativeQueryRef": "% del paro no programado"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Detalle expandible por código'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

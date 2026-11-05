@@ -1,0 +1,155 @@
+table Fecha
+	dataCategory: Time
+	lineageTag: ee6316ae-0d1f-5f2b-971d-82d00015a564
+
+	column fecha_key
+		dataType: int64
+		isHidden
+		lineageTag: de40f0b9-24a0-5533-b4dd-a97816c7c675
+		summarizeBy: none
+		sourceColumn: fecha_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha
+		dataType: dateTime
+		isKey
+		formatString: dd/mm/yyyy
+		lineageTag: c7efeb76-a6b8-5ec1-bf4c-bb8e6bd4d040
+		summarizeBy: none
+		sourceColumn: fecha
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año'
+		dataType: int64
+		formatString: 0
+		lineageTag: f2ef3cc3-1975-51e8-bf6e-bc5e2483acc1
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column Semestre
+		dataType: int64
+		formatString: 0
+		lineageTag: f683324a-5666-5a5b-a66d-373ac7e43c17
+		summarizeBy: none
+		sourceColumn: semestre
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trimestre
+		dataType: int64
+		formatString: 0
+		lineageTag: f88d0fdb-e2e8-56a7-9887-6ac5d39fae39
+		summarizeBy: none
+		sourceColumn: trimestre
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes (número)'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 10d09795-74d5-5258-9845-3329696d5572
+		summarizeBy: none
+		sourceColumn: mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes
+		dataType: string
+		lineageTag: f5493102-5cc6-5338-ab64-4ee014b869ad
+		summarizeBy: none
+		sourceColumn: nombre_mes
+		sortByColumn: 'Mes (número)'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año-Mes'
+		dataType: string
+		lineageTag: f831d1b6-e844-5472-a009-963eb3e32cea
+		summarizeBy: none
+		sourceColumn: anio_mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Semana ISO'
+		dataType: int64
+		formatString: 0
+		lineageTag: 296a5135-2014-54b6-9f8b-dc70d5ffcc3c
+		summarizeBy: none
+		sourceColumn: semana_iso
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día de la semana (número)'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b85ebb29-3a7e-5d83-9cf3-68010b57d55c
+		summarizeBy: none
+		sourceColumn: dia_semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día de la semana'
+		dataType: string
+		lineageTag: 7c4078ee-0ccf-5ab5-ad67-6ab1da4d9afb
+		summarizeBy: none
+		sourceColumn: nombre_dia
+		sortByColumn: 'Día de la semana (número)'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Es fin de semana'
+		dataType: boolean
+		lineageTag: ba0c60c0-3327-57b8-ba0e-5cc2ae8275fa
+		summarizeBy: none
+		sourceColumn: es_fin_semana
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Verdadero cuando el mes tiene al menos 30 filas de no operación. Los meses normales tienen entre 38 y 125; desde julio de 2024 hay 11 o menos.
+	column 'Mes con registro de no operación' =
+			CALCULATE (
+			    COUNTROWS ( NoOperacion ),
+			    ALLEXCEPT ( Fecha, Fecha[Año-Mes] )
+			) >= 30
+		dataType: boolean
+		lineageTag: 0f0ac81c-217a-5fdd-9041-2883b1a5d51e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Jerarquía de fecha'
+		lineageTag: 87b8d61d-dfd3-5afb-b647-6faf2cc6a87d
+
+		level 'Año'
+			lineageTag: 44b9f197-9356-5bb8-aca2-dc222a247b1a
+			column: 'Año'
+
+		level Trimestre
+			lineageTag: 854634a2-fdd0-5107-8a2f-322570b412f0
+			column: Trimestre
+
+		level Mes
+			lineageTag: 90239ab3-618e-50bf-8250-dac3155d043a
+			column: Mes
+
+		level Fecha
+			lineageTag: eac0cacb-cd7d-5a77-85aa-6f7224c9192a
+			column: Fecha
+
+	partition Fecha = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="dim_fecha"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"fecha_key", "fecha", "anio", "semestre", "trimestre", "mes", "nombre_mes", "anio_mes", "semana_iso", "dia_semana", "nombre_dia", "es_fin_semana"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table

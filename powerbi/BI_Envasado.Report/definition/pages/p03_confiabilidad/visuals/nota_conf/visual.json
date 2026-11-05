@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "nota_conf",
+  "position": {
+    "x": 16,
+    "y": 424,
+    "z": 0,
+    "width": 624,
+    "height": 286,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Límites del dato"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "La fuente no registra la hora de inicio ni el número de eventos: solo minutos por código en cada línea."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Cada línea con código 01 o 03 cuenta como una falla; varias fallas en una línea cuentan como una."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Por eso el MTBF y el MTTR quedan sobrestimados. 2025 solo cubre tres meses y tiene muy pocas fallas: no lo compare con un año completo."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

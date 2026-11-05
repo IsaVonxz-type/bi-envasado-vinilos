@@ -1,0 +1,121 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "motivos",
+  "position": {
+    "x": 648,
+    "y": 212,
+    "z": 11,
+    "width": 616,
+    "height": 250,
+    "tabOrder": 11
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "MotivoNoOperacion"
+                        }
+                      },
+                      "Hierarchy": "Jerarquía de no operación"
+                    }
+                  },
+                  "Level": "Categoría de no operación"
+                }
+              },
+              "queryRef": "MotivoNoOperacion.Jerarquía de no operación.Categoría de no operación",
+              "nativeQueryRef": "Jerarquía de no operación Categoría de no operación",
+              "active": true
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "MotivoNoOperacion"
+                        }
+                      },
+                      "Hierarchy": "Jerarquía de no operación"
+                    }
+                  },
+                  "Level": "Motivo de no operación"
+                }
+              },
+              "queryRef": "MotivoNoOperacion.Jerarquía de no operación.Motivo de no operación",
+              "nativeQueryRef": "Jerarquía de no operación Motivo de no operación"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Horas no trabajadas"
+                }
+              },
+              "queryRef": "Medidas.Horas no trabajadas",
+              "nativeQueryRef": "Horas no trabajadas"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Medidas"
+                  }
+                },
+                "Property": "Horas no trabajadas"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Horas no trabajadas por motivo (use las flechas de profundización)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

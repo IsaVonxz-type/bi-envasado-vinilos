@@ -1,0 +1,114 @@
+table CausaParo
+	lineageTag: cb4e252a-ceb9-5756-b06b-4af607f4147b
+
+	column causa_key
+		dataType: int64
+		isHidden
+		lineageTag: 234633c8-54ef-5047-98b4-eb2ada7f9f0b
+		summarizeBy: none
+		sourceColumn: causa_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column causa_nk
+		dataType: string
+		isHidden
+		lineageTag: da25f85f-6755-552c-bacb-7de9cd393b98
+		summarizeBy: none
+		sourceColumn: causa_nk
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Código'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 591c22e1-e310-5fc6-991f-bbce937ebe3a
+		summarizeBy: none
+		sourceColumn: codigo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Código y nombre'
+		dataType: string
+		lineageTag: 57cfeb5c-30ae-5930-b632-a7e0456418c5
+		summarizeBy: none
+		sourceColumn: codigo_nombre
+		sortByColumn: 'Código'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Área de impacto'
+		dataType: string
+		lineageTag: c31b71a2-9115-5a69-ab4b-cdfd7a03b053
+		summarizeBy: none
+		sourceColumn: area_impacto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Clasificación OEE'
+		dataType: string
+		lineageTag: 4a56b1dd-1f4d-5ca7-9072-d65021bbb609
+		summarizeBy: none
+		sourceColumn: clasificacion_oee
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Es falla'
+		dataType: boolean
+		lineageTag: d9993b69-03aa-59e5-b03f-8207a4445a54
+		summarizeBy: none
+		sourceColumn: es_falla
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sistema
+		dataType: string
+		lineageTag: ae1b494c-e006-514d-8c18-70479d5f4b2c
+		summarizeBy: none
+		sourceColumn: sistema
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Subcódigo'
+		dataType: string
+		lineageTag: b5875b5e-4776-505e-8f9b-65856df752a5
+		summarizeBy: none
+		sourceColumn: subcodigo
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Jerarquía de paros'
+		lineageTag: 332e9d30-831b-5eb2-9c36-c4c40ef15fd4
+
+		level 'Clasificación OEE'
+			lineageTag: 9c248613-2f71-5e23-8956-41b52ea7059b
+			column: 'Clasificación OEE'
+
+		level 'Área de impacto'
+			lineageTag: 583fe36c-4e0e-5301-b191-b7052e079dcf
+			column: 'Área de impacto'
+
+		level 'Código y nombre'
+			lineageTag: c6f7cf3e-ad4c-534f-a6a9-52b55920ff68
+			column: 'Código y nombre'
+
+		level Sistema
+			lineageTag: 1e1d8c79-4c3e-50de-b58f-5eb852e46f81
+			column: Sistema
+
+		level 'Subcódigo'
+			lineageTag: f0d3995b-3df7-5318-9c1f-5361e4874664
+			column: 'Subcódigo'
+
+	partition CausaParo = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="dim_causa_paro"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"causa_key", "causa_nk", "codigo", "codigo_nombre", "area_impacto", "clasificacion_oee", "es_falla", "sistema", "subcodigo"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table

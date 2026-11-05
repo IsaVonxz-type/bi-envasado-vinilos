@@ -1,0 +1,115 @@
+table Produccion
+	lineageTag: 3ff9b0e7-dcfe-5605-8d48-0a96281bd5cd
+
+	column fecha_key
+		dataType: int64
+		isHidden
+		lineageTag: 8f454ff3-d0be-52d6-8b9a-d303aadca4f2
+		summarizeBy: none
+		sourceColumn: fecha_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column maquina_key
+		dataType: int64
+		isHidden
+		lineageTag: 5f3fa9a7-f906-59fe-8152-7dc71a67e335
+		summarizeBy: none
+		sourceColumn: maquina_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column turno_key
+		dataType: int64
+		isHidden
+		lineageTag: 37b09acd-a6a8-5f54-8ba1-3e86e5c1084e
+		summarizeBy: none
+		sourceColumn: turno_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column referencia_key
+		dataType: int64
+		isHidden
+		lineageTag: 4f1a29c1-cdee-5da2-9d23-ff0da68e581e
+		summarizeBy: none
+		sourceColumn: referencia_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column operario_key
+		dataType: int64
+		isHidden
+		lineageTag: b546ecc9-9bb2-54b2-b1d9-161c3324f68c
+		summarizeBy: none
+		sourceColumn: operario_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column pacas_reportadas
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: ada527cb-de7b-54bb-be03-96568ebf9078
+		summarizeBy: none
+		sourceColumn: pacas_reportadas
+
+		annotation SummarizationSetBy = Automatic
+
+	column pacas_validas
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 4311e1e4-9c1a-5bab-b93a-e37ce0890deb
+		summarizeBy: none
+		sourceColumn: pacas_validas
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades_producidas
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: d5c59351-d769-5ec1-9c62-6f3704dcd41e
+		summarizeBy: none
+		sourceColumn: unidades_producidas
+
+		annotation SummarizationSetBy = Automatic
+
+	column horas_trabajadas
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 914106c6-0a9c-5c5c-b25a-4157ffd85781
+		summarizeBy: none
+		sourceColumn: horas_trabajadas
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Pacas atípicas'
+		dataType: boolean
+		lineageTag: ef41759b-6ec7-5329-b69d-1b33fefbafe6
+		summarizeBy: none
+		sourceColumn: alerta_pacas_atipicas
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Paro mayor que horas trabajadas'
+		dataType: boolean
+		lineageTag: f271768d-db0a-5f27-b0c3-c20d2d07f16d
+		summarizeBy: none
+		sourceColumn: alerta_paro_excede
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Produccion = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="fact_produccion"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"fecha_key", "maquina_key", "turno_key", "referencia_key", "operario_key", "pacas_reportadas", "pacas_validas", "unidades_producidas", "horas_trabajadas", "alerta_pacas_atipicas", "alerta_paro_excede"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table

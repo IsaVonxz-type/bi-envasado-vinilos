@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
+  "pageOrder": [
+    "p01_resumen",
+    "p02_paros",
+    "p03_confiabilidad",
+    "p04_capacidad",
+    "p05_calidad_dato"
+  ],
+  "activePageName": "p01_resumen"
+}

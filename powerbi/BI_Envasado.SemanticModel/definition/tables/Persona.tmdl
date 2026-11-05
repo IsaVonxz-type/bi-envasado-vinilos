@@ -1,0 +1,39 @@
+table Persona
+	lineageTag: 9b55ddd8-3d02-5b71-9201-bef422eb367f
+
+	column persona_key
+		dataType: int64
+		isHidden
+		lineageTag: a046d5e9-4a05-5aac-8339-acc1949e0e7d
+		summarizeBy: none
+		sourceColumn: persona_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Seudónimo'
+		dataType: string
+		lineageTag: 8cc45db9-e8fd-57a2-b50b-9a678bc2bc96
+		summarizeBy: none
+		sourceColumn: seudonimo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Rol
+		dataType: string
+		lineageTag: 933757e0-378c-5f73-b68d-3dbf35b9bc47
+		summarizeBy: none
+		sourceColumn: rol
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Persona = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="dim_persona"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"persona_key", "seudonimo", "rol"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table

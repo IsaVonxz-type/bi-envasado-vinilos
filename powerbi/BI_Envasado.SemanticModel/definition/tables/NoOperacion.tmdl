@@ -1,0 +1,61 @@
+table NoOperacion
+	lineageTag: 4013f43d-f661-54b5-9cd6-6f2fe8ed3d08
+
+	column fecha_key
+		dataType: int64
+		isHidden
+		lineageTag: 561d07e4-a5cc-51cf-9601-9dd62007f050
+		summarizeBy: none
+		sourceColumn: fecha_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column maquina_key
+		dataType: int64
+		isHidden
+		lineageTag: 68ad0111-407f-555d-95e7-3213a8ca1867
+		summarizeBy: none
+		sourceColumn: maquina_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column motivo_key
+		dataType: int64
+		isHidden
+		lineageTag: c2f5ef4b-5d8c-50e3-b96c-3ca837ae24b6
+		summarizeBy: none
+		sourceColumn: motivo_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column horas_reportadas
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 8e817b0b-f307-583f-a393-c0347127f9c4
+		summarizeBy: none
+		sourceColumn: horas_reportadas
+
+		annotation SummarizationSetBy = Automatic
+
+	column horas_ajustadas
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 2bd102a3-63d9-51d7-8686-08294c78c1c1
+		summarizeBy: none
+		sourceColumn: horas_ajustadas
+
+		annotation SummarizationSetBy = Automatic
+
+	partition NoOperacion = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema="dw", Item="fact_no_operacion"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"fecha_key", "maquina_key", "motivo_key", "horas_reportadas", "horas_ajustadas"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table
