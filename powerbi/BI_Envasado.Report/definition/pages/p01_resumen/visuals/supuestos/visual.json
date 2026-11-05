@@ -26,7 +26,14 @@
               {
                 "textRuns": [
                   {
-                    "value": "El OEE solo se muestra cuando al menos el 80 % del tiempo operativo tiene estándar de velocidad: eso ocurre desde 2024."
+                    "value": "El OEE confiable cuenta desde 2024 y solo cuando al menos el 80 % del tiempo operativo tiene estándar de velocidad. Las demás tarjetas muestran todo el periodo, por eso la cobertura (46 %) parece baja: incluye 2022 y 2023."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Los huecos de las líneas son meses en que una máquina no llegó a ese 80 % (por ejemplo Vinilos_3 a finales de 2024): ahí el OEE no es confiable y no se muestra."
                   }
                 ]
               },

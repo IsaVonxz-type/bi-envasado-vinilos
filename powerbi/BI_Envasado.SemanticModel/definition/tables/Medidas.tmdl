@@ -194,9 +194,9 @@ table Medidas
 		displayFolder: 6. Capacidad
 		lineageTag: b73c285c-b528-5270-9039-c9213702cd69
 
-	/// OEE del mismo periodo del año anterior.
+	/// OEE del mismo periodo del año anterior. Queda en blanco si el periodo actual no tiene producción.
 	measure 'OEE año anterior' =
-			CALCULATE ( [OEE confiable], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) )
+			IF ( NOT ISEMPTY ( OEE_Base ), CALCULATE ( [OEE confiable], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) ) )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: 7. Inteligencia de tiempo
 		lineageTag: 506cb9fa-f959-57c9-8c93-d4ee4379077d
@@ -210,35 +210,35 @@ table Medidas
 
 	/// OEE desde el 1 de enero hasta la fecha de la selección (suma tiempos y unidades antes de dividir).
 	measure 'OEE acumulado del año' =
-			CALCULATE ( [OEE confiable], DATESYTD ( Fecha[Fecha] ) )
+			IF ( NOT ISEMPTY ( OEE_Base ), CALCULATE ( [OEE confiable], DATESYTD ( Fecha[Fecha] ) ) )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: 7. Inteligencia de tiempo
 		lineageTag: 9c887b37-1630-55f3-bb7b-adf1a3fb0abf
 
 	/// OEE de los últimos tres meses, suavizando la variación mensual.
 	measure 'OEE móvil 3 meses' =
-			CALCULATE ( [OEE confiable], DATESINPERIOD ( Fecha[Fecha], MAX ( Fecha[Fecha] ), -3, MONTH ) )
+			IF ( NOT ISEMPTY ( OEE_Base ), CALCULATE ( [OEE confiable], DATESINPERIOD ( Fecha[Fecha], MAX ( Fecha[Fecha] ), -3, MONTH ) ) )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: 7. Inteligencia de tiempo
 		lineageTag: 5eebfe28-b112-540a-8e82-cdfd6b298e9a
 
 	/// Disponibilidad del mismo periodo del año anterior.
 	measure 'Disponibilidad año anterior' =
-			CALCULATE ( [Disponibilidad], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) )
+			IF ( NOT ISEMPTY ( OEE_Base ), CALCULATE ( [Disponibilidad], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) ) )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: 7. Inteligencia de tiempo
 		lineageTag: 34da65d3-0d46-5b73-9371-96916256b062
 
 	/// Pacas válidas del mismo periodo del año anterior.
 	measure 'Pacas año anterior' =
-			CALCULATE ( [Pacas válidas], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) )
+			IF ( NOT ISEMPTY ( Produccion ), CALCULATE ( [Pacas válidas], SAMEPERIODLASTYEAR ( Fecha[Fecha] ) ) )
 		formatString: #,0
 		displayFolder: 7. Inteligencia de tiempo
 		lineageTag: 057dedd8-75eb-50bd-b4b9-3def32f606f2
 
 	/// Pacas válidas desde el 1 de enero.
 	measure 'Pacas acumuladas del año' =
-			CALCULATE ( [Pacas válidas], DATESYTD ( Fecha[Fecha] ) )
+			IF ( NOT ISEMPTY ( Produccion ), CALCULATE ( [Pacas válidas], DATESYTD ( Fecha[Fecha] ) ) )
 		formatString: #,0
 		displayFolder: 7. Inteligencia de tiempo
 		lineageTag: 32e4ec32-37c9-577a-8aa9-4b70130dea1d
