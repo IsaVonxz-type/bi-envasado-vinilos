@@ -20,6 +20,13 @@ flowchart LR
 - **Power BI:** proyecto PBIP con 33 medidas, inteligencia de tiempo, un Pareto y profundización por la jerarquía código → sistema → subcódigo.
 - **Grafana:** tablero casi en tiempo real alimentado por un simulador calibrado con la historia, con tres reglas de alerta.
 
+## Vista previa
+
+| Power BI | Grafana |
+|---|---|
+| ![Causas de paro: Pareto y profundización](docs/capturas/pbi_02_paros.png) | ![Tablero con una falla provocada y alertas disparadas](docs/capturas/gf_02_falla.jpg) |
+| ![Resumen ejecutivo del OEE](docs/capturas/pbi_01_resumen.png) | ![Tablero en operación normal](docs/capturas/gf_01_normal.jpg) |
+
 ## Reproducir desde cero
 
 Requisitos: Docker con Docker Compose y el archivo fuente, que no se versiona porque contiene datos personales.
@@ -86,7 +93,8 @@ docker compose run --rm --no-deps simulator python -m pytest tests -q
 | `grafana/` | Provisioning (fuente de datos, tableros, alertas) y tablero exportado |
 | `powerbi/` | Proyecto de Power BI en formato PBIP (modelo TMDL y reporte PBIR) |
 | `db/init/` | Creación del usuario de solo lectura al iniciar la base |
-| `docs/` | Análisis, indicadores, modelo, ETL, monitoreo, Power BI, arquitectura, seguridad y diccionario de datos |
+| `docs/` | Análisis, indicadores, modelo, ETL, monitoreo, Power BI, arquitectura, seguridad, diccionario de datos, hallazgos y capturas de los tableros |
+| `tools/entregable/` | Scripts para generar el PDF entregable y tomar las capturas |
 | `data/source/` | Archivo fuente local, ignorado por Git |
 
 ## Documentación
