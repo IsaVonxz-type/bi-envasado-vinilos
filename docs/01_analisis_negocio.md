@@ -45,6 +45,7 @@ Los conteos exactos de cada ejecución están en [`generated/reporte_etl.md`](ge
 | Paro incoherente | 45 filas con más paro que horas trabajadas | Se conservan con alerta; el tiempo operativo se limita a cero |
 | Catálogo con errores | Celdas `#VALUE!` en `minutos * turno`, porque dependen del formulario | Se usan solo las columnas base del catálogo |
 | Periodos incompletos | Sin junio de 2022; julio a septiembre de 2022 con 25 filas; marzo de 2025 parcial | Los comparativos deben avisarlo |
+| Registro de no operación interrumpido | Los meses normales tienen entre 38 y 125 filas de horas no trabajadas; agosto de 2023 tiene 11 y, desde julio de 2024, 9, 4, 6 y ninguna desde octubre, mientras la producción sigue registrándose | La utilización se infla: en 13 de los 38 meses nadie anotó los paros. Debe medirse solo en los 25 meses con registro (consulta 08 y medida de Power BI) |
 | Datos personales | Nombres completos y parciales de operarias y mantenimiento; texto libre en `Observaciones`; autores en los metadatos | Exposición de personas en un repositorio público |
 
 ## Limitaciones del esquema actual

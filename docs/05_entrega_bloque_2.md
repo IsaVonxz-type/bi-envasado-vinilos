@@ -1,5 +1,7 @@
 # Entrega del Bloque 1 al Bloque 2
 
+> **Estado:** el Bloque 2 ya está construido. Sus documentos son [monitoreo y alertas](06_monitoreo_grafana.md), [Power BI](07_power_bi.md), [arquitectura y evolución](08_arquitectura_y_evolucion.md), [seguridad y datos personales](09_seguridad_y_datos_personales.md) y el [diccionario de datos](10_diccionario_de_datos.md). Este documento se conserva como la entrega original; una corrección importante: la utilización de capacidad.
+
 ## Cómo arrancar
 
 1. Clonar el repositorio y copiar `.env.example` a `.env`, con valores propios.
@@ -32,7 +34,7 @@ Cada `docker compose up -d` vuelve a ejecutar el ETL, que elimina y recarga `dw`
 
 Calculados sobre los datos cargados:
 
-- **La mayor pérdida no está en la máquina.** La utilización total es del 48,4 %: 28.842 de 40.466 h sin operar se deben a paros por ventas.
+- **La mayor pérdida no está en la máquina.** La utilización es del 38,8 % en los 25 meses con registro completo (el 48,4 % que sale de incluir todo el archivo está inflado, porque desde julio de 2024 casi no se anotó la no operación). 28.842 de 40.466 h sin operar se deben a paros por ventas (71 %).
 - **Dentro de los paros no programados, los primeros son operativos:** ajuste operativo (1.817 h), limpieza por derrame (1.546 h) y alistamiento (621 h). La falla electromecánica suma 323 h.
 - **Hay dos grupos de máquinas.** En 2024, el OEE es de 81,6 % en `Vinilos_3` y 79,6 % en `Vinilos_4`, frente a 55,9 % en `Vinilos_1` y 60,8 % en `Vinilos_2`.
 - **La disponibilidad cae cada año:** 91,7 % en 2022, 85,0 % en 2023, 80,7 % en 2024 y 78,3 % en 2025 (hasta marzo).

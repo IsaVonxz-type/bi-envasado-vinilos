@@ -45,6 +45,7 @@ Las metas de 85 %, 90 %, 95 % y 99 % son referencias habituales de OEE, no metas
 
 **Por qué estos tres:**
 
-- **Utilización:** el OEE solo mide las horas en que la línea estuvo programada, así que puede verse bien con la planta casi parada. Con las cifras cargadas, la utilización total es del 48,4 %, y "Paro de máquina por ventas" concentra 28.842 de las 40.466 h no trabajadas (71 %). La decisión de invertir en capacidad depende de este dato.
+- **Utilización:** el OEE solo mide las horas en que la línea estuvo programada, así que puede verse bien con la planta casi parada. En los 25 meses con registro completo de no operación, la utilización es del 38,8 %, y "Paro de máquina por ventas" concentra el 71 % de las horas no trabajadas (28.842 de 40.466 h en todo el archivo). La decisión de invertir en capacidad depende de este dato.
+  - **Corrección:** `vw_utilizacion_mensual` incluye los 13 meses en que casi no se registró la no operación (desde julio de 2024 y agosto de 2023, entre otros), y con ellos la utilización total sale en 48,4 %, una cifra inflada. La consulta [`08_utilizacion_por_maquina.sql`](../sql/queries/08_utilizacion_por_maquina.sql) y la medida de Power BI usan solo los meses con al menos 30 filas de no operación.
 - **Unidades perdidas:** traduce los minutos a producción, un lenguaje más útil para priorizar inversiones que un porcentaje. Solo se calcula cuando existe un estándar.
 - **Completitud:** el 47 % de las horas no tiene referencia. Medirlo permite gobernar la calidad del dato de forma continua, y fue lo que limitó el OEE histórico.
